@@ -61,14 +61,19 @@ public class JaccardSearcher extends Searcher{
 			union.addAll(d.getTokens());
 			union.addAll(queryList);
 			System.out.println(d.getId()+" Union: "+union.size());	
-			double score = count/union.size();
+			double score = count*1.0/union.size();
+			System.out.println(score);
+			SearchResult docResult = new SearchResult(d, score);
+			result.add(docResult);
 		}
+		//Ranking
 		
 		
 		
 		
 		
-		return null;
+		
+		return result;
 		/***********************************************/
 	}
 

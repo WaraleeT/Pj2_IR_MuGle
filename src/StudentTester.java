@@ -12,11 +12,11 @@ public class StudentTester {
 	public static final String testCorpus = "./data/lisa";
 	public static final int k = 10;
 	public static final String[] testQueries = new String[] {
-//			""
-//			,"Information Retrieval"
-//			,"Machine Learning"
-//			,"Deep Learning"
-			 "I AM INTERESTED IN INFORMATION ON THE PROVISION OF CURRENT AWARENESS BULLETINS, ESPECIALLY SDI SERVICES IN ANY INSTITUTION, E.G. ACADEMIC LIBRARIES, INDUSTRY, AND IN ANY SUBJECT FIELD. SDI, SELECTIVE DISSEMINATION OF INFORMATION, CURRENT AWARENESS BULLETINS, INFORMATION BULLETINS."
+			""
+			,"Information Retrieval"
+			,"Machine Learning"
+			,"Deep Learning"
+			,"I AM INTERESTED IN INFORMATION ON THE PROVISION OF CURRENT AWARENESS BULLETINS, ESPECIALLY SDI SERVICES IN ANY INSTITUTION, E.G. ACADEMIC LIBRARIES, INDUSTRY, AND IN ANY SUBJECT FIELD. SDI, SELECTIVE DISSEMINATION OF INFORMATION, CURRENT AWARENESS BULLETINS, INFORMATION BULLETINS."
 			,"THE WHITE HOUSE CONFERENCE ON LIBRARY AND INFORMATION SERVICES, 1979. SUMMARY, MARCH 1980. FOR AN ABSTRACT OF THIS REPORT SEE 81/795. REPORT NOT AVAILABLE FROM NTIS."
 	};
 	
@@ -113,7 +113,7 @@ public class StudentTester {
 	{	
 		/********************* Uncomment test cases you want to test ***************/
 		testJaccardSearcher(testCorpus);
-		testTFIDFSearcher(testCorpus);
+//		testTFIDFSearcher(testCorpus);
 		//testCompareTwoSearchersOnSomeQueries(testCorpus);
 		//testCompareTwoSearchersOnAllQueries(testCorpus);
 		
