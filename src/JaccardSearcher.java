@@ -3,6 +3,7 @@
 //ID: 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -54,26 +55,23 @@ public class JaccardSearcher extends Searcher{
 					count++;
 				}
 			}
-			System.out.println(d.getId()+" Intersection: "+count);
+//			System.out.println(d.getId()+" Intersection: "+count);
 			
 			//Union
 			HashSet<String> union = new HashSet<>();
 			union.addAll(d.getTokens());
 			union.addAll(queryList);
-			System.out.println(d.getId()+" Union: "+union.size());	
+//			System.out.println(d.getId()+" Union: "+union.size());	
 			double score = count*1.0/union.size();
-			System.out.println(score);
+//			System.out.println(score);
 			SearchResult docResult = new SearchResult(d, score);
 			result.add(docResult);
 		}
 		//Ranking
 		
+		Collections.sort(result);
 		
-		
-		
-		
-		
-		return result;
+		return result.subList(0, k);
 		/***********************************************/
 	}
 
