@@ -82,11 +82,12 @@ public class TFIDFSearcher extends Searcher
 			int count = 0;
 			double tf = 0;
 			double weight = 0;
-			for(String str:queryList){
-				if(str.equals(q)){
-					count++;
-				}
-			}
+			count = Collections.frequency(queryList, q);
+//			for(String str:queryList){
+//				if(str.equals(q)){
+//					count++;
+//				}
+//			}
 			if(count == 0){
 				tf = 0;
 			}
@@ -106,11 +107,12 @@ public class TFIDFSearcher extends Searcher
 			double weight = 0;
 			for(String q : vocab){
 				int count = 0;
-				for(String s: d.getTokens()){
-					if(s.equals(q)){
-						count++;
-					}
-				}
+				count = Collections.frequency(d.getTokens(), q);
+//				for(String s: d.getTokens()){
+//					if(s.equals(q)){
+//						count++;
+//					}
+//				}
 				System.out.println("Doc"+d.getId()+" Query "+q+" : "+count);
 				double tfscore;
 				if(count == 0){
@@ -129,12 +131,13 @@ public class TFIDFSearcher extends Searcher
 			double sizeq = 0;
 			for(String term:vocab){
 				score += docVector.get(term)*qVector.get(term);
-				sized += docVector.get(term)*docVector.get(term);
-				sizeq += qVector.get(term)*qVector.get(term);
+				sized += Math.pow(docVector.get(term),2);
+				sizeq += Math.pow(qVector.get(term),2);
 			}
 			score = score/(Math.sqrt(sized)+Math.sqrt(sizeq));	
 			SearchResult docResult = new SearchResult(d, score);
 			result.add(docResult);
+			break;
 		}
 		
 		
