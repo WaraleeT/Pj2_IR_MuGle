@@ -24,7 +24,7 @@ public class TFIDFSearcher extends Searcher
 		for(Document d: super.documents){
 			vocab.addAll(d.getTokens());
 		}
-		System.out.println(vocab.size());
+//		System.out.println(vocab.size());
 		
 		for(String q : vocab){
 			//Find idf
@@ -61,12 +61,11 @@ public class TFIDFSearcher extends Searcher
 		List<String> query = super.tokenize(queryString);
 		List<String> queryList = new ArrayList<>();
 		for(String str: query){
-			if(!queryList.contains(str)){
-				queryList.add(str);
-				vocab.add(str);
-			}
+			queryList.add(str);
+			vocab.add(str);
 		}
 		
+		//Calculate idf for query
 		for(String str:queryList){
 			int count = 0;
 			for(Document d: super.documents){
@@ -78,15 +77,17 @@ public class TFIDFSearcher extends Searcher
 			idfscore.put(str, idf);
 		}
 		
+		//Create Map that contains weight of query
 		for(String q:vocab){
 			int count = 0;
 			double tf = 0;
 			double weight = 0;
-			for(String str:queryList){
-				if(str.equals(q)){
-					count++;
-				}
-			}
+			count = Collections.frequency(queryList, q);
+//			for(String str:queryList){
+//				if(str.equals(q)){
+//					count++;
+//				}
+//			}
 			if(count == 0){
 				tf = 0;
 			}
@@ -97,44 +98,57 @@ public class TFIDFSearcher extends Searcher
 			qVector.put(q, weight);
 		}
 		
-		for(String i : qVector.keySet()){
-			System.out.println(i+" "+qVector.get(i));
-		}
-				
+//		for(String i : qVector.keySet()){
+//			System.out.println(i+" "+qVector.get(i));
+//		}
+//				
 		
 		for(Document d : super.documents){
 			double weight = 0;
-			for(String q : vocab){
-				int count = 0;
-				for(String s: d.getTokens()){
-					if(s.equals(q)){
-						count++;
-					}
-				}
-				System.out.println("Doc"+d.getId()+" Query "+q+" : "+count);
-				double tfscore;
-				if(count == 0){
-					tfscore = 0;
-				}
-				else{
-					tfscore = 1 + Math.log(count);
-				}
-				weight = tfscore*idfscore.get(q);
-				docVector.put(q, weight);
-				System.out.println("Doc"+d.getId()+" Query "+q+"TF score : "+tfscore+" idfscore: "+idfscore.get(q) +" weight : "+weight);
-				
-			}
 			double score = 0;
 			double sized = 0;
 			double sizeq = 0;
-			for(String term:vocab){
-				score += docVector.get(term)*qVector.get(term);
-				sized += docVector.get(term)*docVector.get(term);
-				sizeq += qVector.get(term)*qVector.get(term);
+			Set<String> unionSet = new HashSet<>();
+			
+			unionSet.addAll(d.getTokens());
+			unionSet.addAll(queryList);
+//			System.out.println("Find "+unionSet.size());
+			
+			for(String q : unionSet){
+				int count = 0;
+				count = Collections.frequency(d.getTokens(), q);
+//				System.out.println("Doc"+d.getId()+" Query "+q+" : "+count);
+				double tfscore;
+				if(count == 0){
+					tfscore = 0;
+					weight = 0;
+				}
+				else{
+					tfscore = 1 + Math.log(count);
+					
+				}
+				weight = tfscore*idfscore.get(q);
+				score += weight*qVector.get(q);
+				sized += Math.pow(weight,2);
+				sizeq += Math.pow(qVector.get(q),2);
+//				weight = tfscore*idfscore.get(q);
+//				docVector.put(q, weight);
+//				
+//				score += weight*qVector.get(q);
+//				sized += Math.pow(weight,2);
+//				sizeq += Math.pow(qVector.get(q),2);
+				
+//				System.out.println("Doc"+d.getId()+" Query "+q+"TF score : "+tfscore+" idfscore: "+idfscore.get(q) +" weight : "+weight);
 			}
-			score = score/(Math.sqrt(sized)+Math.sqrt(sizeq));	
+//			for(String term:vocab){
+//				score += docVector.get(term)*qVector.get(term);
+//				sized += Math.pow(docVector.get(term),2);
+//				sizeq += Math.pow(qVector.get(term),2);
+//			}
+			score = score/(Math.sqrt(sized)*Math.sqrt(sizeq));	
 			SearchResult docResult = new SearchResult(d, score);
 			result.add(docResult);
+	
 		}
 		
 		
