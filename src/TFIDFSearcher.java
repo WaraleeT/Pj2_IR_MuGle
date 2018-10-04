@@ -35,7 +35,7 @@ public class TFIDFSearcher extends Searcher
 				}
 			}
 //			System.out.println(q+"   =   "+countDoc);
-			double idf = Math.log(1+(super.documents.size()/(double)countDoc));
+			double idf = Math.log10(1+(super.documents.size()/(double)countDoc));
 			idfscore.put(q, idf);
 			
 		}
@@ -73,7 +73,7 @@ public class TFIDFSearcher extends Searcher
 					count++;
 				}
 			}
-			double idf = Math.log(1+(super.documents.size()/(double)count));
+			double idf = Math.log10(1+(super.documents.size()/(double)count));
 			idfscore.put(str, idf);
 		}
 		
@@ -92,16 +92,11 @@ public class TFIDFSearcher extends Searcher
 				tf = 0;
 			}
 			else{
-				tf = 1 + Math.log(count);
+				tf = 1 + Math.log10(count);
 			}
 			weight = tf*idfscore.get(q);
 			qVector.put(q, weight);
-		}
-		
-//		for(String i : qVector.keySet()){
-//			System.out.println(i+" "+qVector.get(i));
-//		}
-//				
+		}		
 		
 		for(Document d : super.documents){
 			double weight = 0;
@@ -124,7 +119,7 @@ public class TFIDFSearcher extends Searcher
 					weight = 0;
 				}
 				else{
-					tfscore = 1 + Math.log(count);
+					tfscore = 1 + Math.log10(count);
 					
 				}
 				weight = tfscore*idfscore.get(q);

@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 public class SearcherEvaluator {
 	private List<Document> queries = null;				//List of test queries. Each query can be treated as a Document object.
@@ -72,7 +73,40 @@ public class SearcherEvaluator {
 	public double[] getQueryPRF(Document query, Searcher searcher, int k)
 	{
 		/*********************** YOUR CODE HERE *************************/
-		return null;
+		double[] result = new double[3];
+		double precision, recall, f1;
+
+		System.out.println(query.getTokens());
+	    List<SearchResult> R = searcher.search(query.getRawText(),k); //Retrieve doc
+		 // get id from R then store in set
+
+		Set<Integer> ans = answers.get(query.getId()); // G
+        Set<Integer> intersect = new HashSet<>();
+		for(SearchResult res : R){
+			if(ans.contains(res.getDocument().getId())){
+				intersect.add(res.getDocument().getId());
+			}
+		}
+//		System.out.println("Ans from search"+R.toString());
+//		System.out.println("Real ans"+ans.toString());
+//		System.out.println("Intersect "+intersect.toString());
+		if(intersect.size() == 0){
+			result[0] = 0;
+			result[1] = 0;
+			result[2] = 0;
+		}
+		else{
+			// find size of R intersect G
+			precision = (double)intersect.size()/(double)R.size();
+			recall = (double)intersect.size()/(double)ans.size();
+			f1 = (2*precision*recall)/(precision+recall);
+			result[0] = precision;
+			result[1] = recall;
+			result[2] = f1;
+		
+		}
+		
+		return result;
 		/****************************************************************/
 	}
 	
@@ -86,7 +120,21 @@ public class SearcherEvaluator {
 	public double[] getAveragePRF(Searcher searcher, int k)
 	{
 		/*********************** YOUR CODE HERE *************************/
-		return null;
+		double[] result = new double[3];
+		double precision = 0;
+		double recall = 0;
+		double f1 = 0;
+		for(Document q:queries){
+			double[] eval = this.getQueryPRF(q, searcher, k);
+			precision += eval[0];
+			recall += eval[1];
+			f1 += eval[2];
+		}
+		result[0] = precision/queries.size();
+		result[1] = recall/queries.size();
+		result[2] = f1/queries.size();
+		
+		return result;
 		/****************************************************************/
 	}
 }
