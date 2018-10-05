@@ -16,15 +16,14 @@ import javax.swing.plaf.synth.SynthSplitPaneUI;
 public class TFIDFSearcher extends Searcher
 {	public Map<String, Double> idfscore = new TreeMap();
 	public Set<String> vocab = new HashSet<String>();
-	
+	public Map<Document, TreeMap<String, Double>> tfscore = new TreeMap();
 	public TFIDFSearcher(String docFilename) {
 		super(docFilename);
 		/************* YOUR CODE HERE ******************/
-		
+		//Add all tokens of every document to vocab
 		for(Document d: super.documents){
 			vocab.addAll(d.getTokens());
 		}
-//		System.out.println(vocab.size());
 		
 		for(String q : vocab){
 			//Find idf
@@ -34,17 +33,10 @@ public class TFIDFSearcher extends Searcher
 					countDoc++;
 				}
 			}
-//			System.out.println(q+"   =   "+countDoc);
+			
 			double idf = Math.log10(1+(super.documents.size()/(double)countDoc));
 			idfscore.put(q, idf);
-			
 		}
-		
-//		for(String key : idfscore.keySet()){
-//			System.out.println(key+" : "+idfscore.get(key));
-//		}
-//		System.out.println(idfscore.size());
-			
 		
 		/***********************************************/
 	}
@@ -66,14 +58,15 @@ public class TFIDFSearcher extends Searcher
 		}
 		
 		//Add new idf for query that doesn't exist
+		//(If it doesn't exist in vocab before, there is non of them in corpus)
 		for(String str:queryList){
-			int count = 0;
 			if(idfscore.get(str)==null){
 				idfscore.put(str, 0.0);
 			}
 		}
 		
 		//Create Map that contains weight of query
+		//Length = all vocab (Query vector need to do dot product with all document)
 		for(String q:vocab){
 			int count = 0;
 			double tf = 0;
@@ -89,12 +82,7 @@ public class TFIDFSearcher extends Searcher
 			qVector.put(q, weight);
 		}		
 		
-//		for(String temp:qVector.keySet()){
-//			if(qVector.get(temp)!=0){
-//				System.out.println(temp+" : "+ qVector.get(temp));
-//			}	
-//		}
-		
+		//Find score of each document
 		for(Document d : super.documents){
 			double weight = 0;
 			double score = 0;
@@ -102,14 +90,13 @@ public class TFIDFSearcher extends Searcher
 			double sizeq = 0;
 			Set<String> unionSet = new HashSet<>();
 			
+			//Union query and document
 			unionSet.addAll(d.getTokens());
 			unionSet.addAll(queryList);
-//			System.out.println("Find "+unionSet.size());
 			
 			for(String q : unionSet){
 				int count = 0;
 				count = Collections.frequency(d.getTokens(), q);
-//				System.out.println("Doc"+d.getId()+" Query "+q+" : "+count);
 				double tfscore;
 				if(count == 0){
 					tfscore = 0;
@@ -123,20 +110,8 @@ public class TFIDFSearcher extends Searcher
 				score += weight*qVector.get(q);
 				sized += Math.pow(weight,2);
 				sizeq += Math.pow(qVector.get(q),2);
-//				weight = tfscore*idfscore.get(q);
-//				docVector.put(q, weight);
-//				
-//				score += weight*qVector.get(q);
-//				sized += Math.pow(weight,2);
-//				sizeq += Math.pow(qVector.get(q),2);
-				
-//				System.out.println("Doc"+d.getId()+" Query "+q+"TF score : "+tfscore+" idfscore: "+idfscore.get(q) +" weight : "+weight);
 			}
-//			for(String term:vocab){
-//				score += docVector.get(term)*qVector.get(term);
-//				sized += Math.pow(docVector.get(term),2);
-//				sizeq += Math.pow(qVector.get(term),2);
-//			}
+			
 			score = score/(Math.sqrt(sized)*Math.sqrt(sizeq));	
 			SearchResult docResult = new SearchResult(d, score);
 			result.add(docResult);

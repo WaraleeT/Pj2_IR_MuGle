@@ -87,9 +87,6 @@ public class SearcherEvaluator {
 				intersect.add(res.getDocument().getId());
 			}
 		}
-//		System.out.println("Ans from search"+R.toString());
-//		System.out.println("Real ans"+ans.toString());
-//		System.out.println("Intersect "+intersect.toString());
 		if(intersect.size() == 0){
 			result[0] = 0;
 			result[1] = 0;
