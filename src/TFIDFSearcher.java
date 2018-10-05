@@ -54,8 +54,8 @@ public class TFIDFSearcher extends Searcher
 		/************* YOUR CODE HERE ******************/
 		
 		List<SearchResult> result = new ArrayList<SearchResult>();
-		Map<String, Double> docVector = new HashMap<>();
-		Map<String, Double> qVector = new HashMap<>();		
+		Map<String, Double> docVector = new TreeMap<>();
+		Map<String, Double> qVector = new TreeMap<>();		
 		
 		//Tokenize query
 		List<String> query = super.tokenize(queryString);
@@ -65,16 +65,12 @@ public class TFIDFSearcher extends Searcher
 			vocab.add(str);
 		}
 		
-		//Calculate idf for query
+		//Add new idf for query that doesn't exist
 		for(String str:queryList){
 			int count = 0;
-			for(Document d: super.documents){
-				if(d.getTokens().contains(str)){
-					count++;
-				}
+			if(idfscore.get(str)==null){
+				idfscore.put(str, 0.0);
 			}
-			double idf = Math.log10(1+(super.documents.size()/(double)count));
-			idfscore.put(str, idf);
 		}
 		
 		//Create Map that contains weight of query
@@ -83,11 +79,6 @@ public class TFIDFSearcher extends Searcher
 			double tf = 0;
 			double weight = 0;
 			count = Collections.frequency(queryList, q);
-//			for(String str:queryList){
-//				if(str.equals(q)){
-//					count++;
-//				}
-//			}
 			if(count == 0){
 				tf = 0;
 			}
@@ -97,6 +88,12 @@ public class TFIDFSearcher extends Searcher
 			weight = tf*idfscore.get(q);
 			qVector.put(q, weight);
 		}		
+		
+//		for(String temp:qVector.keySet()){
+//			if(qVector.get(temp)!=0){
+//				System.out.println(temp+" : "+ qVector.get(temp));
+//			}	
+//		}
 		
 		for(Document d : super.documents){
 			double weight = 0;

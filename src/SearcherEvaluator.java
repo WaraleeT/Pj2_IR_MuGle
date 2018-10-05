@@ -76,7 +76,7 @@ public class SearcherEvaluator {
 		double[] result = new double[3];
 		double precision, recall, f1;
 
-		System.out.println(query.getTokens());
+//		System.out.println(query.getTokens());
 	    List<SearchResult> R = searcher.search(query.getRawText(),k); //Retrieve doc
 		 // get id from R then store in set
 
